@@ -1,0 +1,318 @@
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
+<style>
+.aeo-wrap{max-width:960px;margin:0 auto;font-family:'Pretendard',-apple-system,BlinkMacSystemFont,sans-serif;padding:8px 0 40px;}
+.aeo-head{display:flex;align-items:center;gap:24px;margin-bottom:32px;flex-wrap:wrap;}
+.aeo-title{margin:0 0 4px;font-size:26px;font-weight:700;letter-spacing:-0.02em;color:var(--text-primary);}
+.aeo-sub{margin:0;font-size:15px;color:#8B95A1;font-weight:500;}
+.aeo-grid{display:grid;grid-template-columns:1fr;gap:20px;}
+@media (min-width:780px){.aeo-grid{grid-template-columns:440px 1fr;align-items:start;}}
+.aeo-card{background:var(--surface-2);border-radius:24px;padding:28px;box-shadow:0 2px 12px rgba(0,0,0,0.05);}
+.aeo-field{margin-bottom:20px;}
+.aeo-num{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;background:#E8F3FF;color:#3182F6;font-size:11px;font-weight:700;margin-right:8px;flex-shrink:0;transition:background .15s,color .15s;}
+.aeo-num.filled{background:#3182F6;color:#fff;}
+.aeo-label-row{display:flex;align-items:center;margin-bottom:8px;}
+.aeo-label{font-size:14px;font-weight:600;color:var(--text-primary);}
+.aeo-hint{font-size:12px;color:#8B95A1;margin-left:30px;margin-top:4px;font-weight:500;}
+.aeo-input,.aeo-textarea{width:100%;box-sizing:border-box;padding:13px 14px;border:none;border-radius:14px;font-size:15px;background:#F2F4F6;color:var(--text-primary);font-family:inherit;transition:box-shadow .15s;}
+.aeo-input:focus,.aeo-textarea:focus{outline:none;box-shadow:0 0 0 2px #3182F6;background:#fff;}
+.aeo-textarea{resize:vertical;line-height:1.6;}
+.aeo-row2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.aeo-toggle-wrap{display:flex;align-items:center;gap:10px;}
+.aeo-toggle{position:relative;width:44px;height:26px;background:#E5E8EB;border-radius:13px;cursor:pointer;transition:background .15s;flex-shrink:0;}
+.aeo-toggle.on{background:#3182F6;}
+.aeo-toggle-dot{position:absolute;top:3px;left:3px;width:20px;height:20px;background:#fff;border-radius:50%;transition:transform .15s;box-shadow:0 1px 3px rgba(0,0,0,0.15);}
+.aeo-toggle.on .aeo-toggle-dot{transform:translateX(18px);}
+.aeo-toggle-text{font-size:14px;color:#4E5968;font-weight:600;}
+.aeo-panel{position:sticky;top:16px;border-radius:24px;background:var(--surface-2);overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,0.05);}
+.aeo-tabs{display:flex;gap:4px;padding:6px;background:#F2F4F6;margin:20px 20px 0;border-radius:14px;}
+.aeo-tab{flex:1;padding:9px;text-align:center;font-size:13px;font-weight:700;color:#8B95A1;cursor:pointer;background:none;border:none;font-family:inherit;border-radius:10px;transition:background .15s,color .15s;}
+.aeo-tab.active{color:#3182F6;background:#fff;box-shadow:0 1px 4px rgba(0,0,0,0.06);}
+.aeo-panel-body{padding:20px;}
+.aeo-code{font-size:12.5px;line-height:1.7;white-space:pre;overflow-x:auto;color:var(--text-primary);margin:0;font-family:var(--font-mono,monospace);max-height:480px;overflow-y:auto;background:#F2F4F6;border-radius:14px;padding:16px;}
+.aeo-copybtn{display:flex;align-items:center;justify-content:center;gap:6px;font-size:14px;font-weight:700;color:#fff;background:#3182F6;border:none;border-radius:12px;padding:11px 18px;cursor:pointer;margin-bottom:12px;width:100%;transition:background .15s;}
+.aeo-copybtn:hover{background:#1B64DA;}
+.aeo-preview-title{font-size:17px;font-weight:700;margin:0 0 6px;color:var(--text-primary);}
+.aeo-preview-desc{font-size:14px;color:#4E5968;margin:0 0 10px;line-height:1.6;}
+.aeo-empty{font-size:13px;color:#8B95A1;padding:24px 0;text-align:center;font-weight:500;}
+.aeo-note{font-size:12px;color:#8B95A1;margin-bottom:10px;font-weight:500;background:#F2F4F6;border-radius:10px;padding:8px 12px;}
+</style>
+
+<div class="aeo-wrap">
+  <div class="aeo-head">
+    <svg id="gaugeSvg" width="60" height="60" viewBox="0 0 60 60" role="img">
+      <title>입력 완성도</title>
+      <circle cx="30" cy="30" r="25" fill="none" stroke="#E5E8EB" stroke-width="6"/>
+      <circle id="gaugeArc" cx="30" cy="30" r="25" fill="none" stroke="#3182F6" stroke-width="6" stroke-linecap="round" stroke-dasharray="157.1" stroke-dashoffset="157.1" transform="rotate(-90 30 30)"/>
+      <text id="gaugeText" x="30" y="34" text-anchor="middle" font-size="13" font-weight="700" fill="var(--text-primary)" font-family="Pretendard,sans-serif">0/10</text>
+    </svg>
+    <div>
+      <h1 class="aeo-title">AEO/GEO 코드 생성기</h1>
+      <p class="aeo-sub">번호 순서대로 채우면 오른쪽에 코드가 바로 만들어져요</p>
+    </div>
+  </div>
+
+  <div class="aeo-grid">
+    <div class="aeo-card">
+      <div class="aeo-field">
+        <div class="aeo-label-row"><span class="aeo-num" data-n="1">1</span><span class="aeo-label">상품명</span></div>
+        <input class="aeo-input" id="f-name" placeholder="쿠쿠 트윈프레셔 전기압력밥솥 6인용">
+      </div>
+      <div class="aeo-field">
+        <div class="aeo-label-row"><span class="aeo-num" data-n="2">2</span><span class="aeo-label">모델명</span></div>
+        <input class="aeo-input" id="f-model" placeholder="CRP-P0610FD">
+      </div>
+      <div class="aeo-row2">
+        <div class="aeo-field">
+          <div class="aeo-label-row"><span class="aeo-num" data-n="3">3</span><span class="aeo-label">가격</span></div>
+          <input class="aeo-input" id="f-price" placeholder="329,000">
+        </div>
+        <div class="aeo-field">
+          <div class="aeo-label-row"><span class="aeo-num" data-n="4">4</span><span class="aeo-label">재고 여부</span></div>
+          <div class="aeo-toggle-wrap" style="height:46px;">
+            <div class="aeo-toggle on" id="f-stock" role="switch" aria-checked="true" aria-label="재고 여부"><div class="aeo-toggle-dot"></div></div>
+            <span class="aeo-toggle-text" id="f-stock-text">재고 있어요</span>
+          </div>
+        </div>
+      </div>
+      <div class="aeo-field">
+        <div class="aeo-label-row"><span class="aeo-num" data-n="5">5</span><span class="aeo-label">한 줄 요약</span></div>
+        <div class="aeo-hint" style="margin-bottom:8px;">비워두면 특장점으로 자동으로 만들어드려요</div>
+        <input class="aeo-input" id="f-summary" placeholder="두 개의 압력 방식을 결합해 백미부터 잡곡까지 균일하게 취사하는 6인용 밥솥">
+      </div>
+      <div class="aeo-field">
+        <div class="aeo-label-row"><span class="aeo-num" data-n="6">6</span><span class="aeo-label">특장점</span></div>
+        <div class="aeo-hint" style="margin-bottom:8px;">한 줄에 하나씩 적어주세요</div>
+        <textarea class="aeo-textarea" id="f-features" rows="3" placeholder="백미/잡곡/누룽지 등 12가지 메뉴 자동 설정
+스팀워시 자동 세척 기능
+보온 24시간 유지"></textarea>
+      </div>
+      <div class="aeo-field">
+        <div class="aeo-label-row"><span class="aeo-num" data-n="7">7</span><span class="aeo-label">자주 묻는 질문</span></div>
+        <div class="aeo-hint" style="margin-bottom:8px;">"질문 → 답변" 형식으로 한 줄에 하나씩</div>
+        <textarea class="aeo-textarea" id="f-faqs" rows="2" placeholder="잡곡밥도 되나요? → 네, 12가지 취사 모드를 지원합니다
+보온은 얼마나 되나요? → 최대 24시간까지 유지됩니다"></textarea>
+      </div>
+      <div class="aeo-row2">
+        <div class="aeo-field">
+          <div class="aeo-label-row"><span class="aeo-num" data-n="8">8</span><span class="aeo-label">평점</span></div>
+          <input class="aeo-input" id="f-rating" placeholder="4.7">
+        </div>
+        <div class="aeo-field">
+          <div class="aeo-label-row"><span class="aeo-num" data-n="8b">·</span><span class="aeo-label">리뷰 수</span></div>
+          <input class="aeo-input" id="f-reviews" placeholder="312">
+        </div>
+      </div>
+      <div class="aeo-field">
+        <div class="aeo-label-row"><span class="aeo-num" data-n="9">9</span><span class="aeo-label">상세이미지 경로</span></div>
+        <input class="aeo-input" id="f-image" placeholder="https://www.cuckoo.co.kr/images/product/CRP-P0610FD/detail.jpg">
+      </div>
+      <div class="aeo-field" style="margin-bottom:0;">
+        <div class="aeo-label-row"><span class="aeo-num" data-n="10">10</span><span class="aeo-label">상품페이지 주소</span></div>
+        <input class="aeo-input" id="f-url" placeholder="https://www.cuckoo.co.kr/product/CRP-P0610FD">
+      </div>
+    </div>
+
+    <div class="aeo-panel">
+      <div class="aeo-tabs">
+        <button class="aeo-tab active" id="tabCode">코드</button>
+        <button class="aeo-tab" id="tabPreview">크롤러가 읽는 내용</button>
+      </div>
+      <div class="aeo-panel-body">
+        <div id="viewCode">
+          <button class="aeo-copybtn" id="copyBtn"><i class="ti ti-copy" aria-hidden="true"></i>복사하기</button>
+          <pre class="aeo-code" id="codeOut"></pre>
+        </div>
+        <div id="viewPreview" style="display:none;">
+          <div id="previewBody" class="aeo-empty">항목을 입력하면 크롤러가 읽게 될 내용이 보여요 (화면엔 안 보여요)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+var ids = ['f-name','f-model','f-price','f-summary','f-features','f-faqs','f-rating','f-reviews','f-image','f-url'];
+
+function escapeHtml(str){
+  return String(str).replace(/[&<>"']/g, function(c){
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
+  });
+}
+
+function getData(){
+  var features = document.getElementById('f-features').value.split('\n').map(function(s){return s.trim();}).filter(Boolean);
+  var faqLines = document.getElementById('f-faqs').value.split('\n').map(function(s){return s.trim();}).filter(Boolean);
+  var faqs = faqLines.map(function(line){
+    var parts = line.split('→');
+    return { q: (parts[0]||'').trim(), a: (parts[1]||'').trim() };
+  }).filter(function(f){ return f.q && f.a; });
+  var name = document.getElementById('f-name').value.trim();
+  var summary = document.getElementById('f-summary').value.trim() || (name + (features.length ? ' - ' + features.slice(0,2).join(', ') + '.' : ''));
+  return {
+    name: name,
+    modelCode: document.getElementById('f-model').value.trim(),
+    price: parseInt(document.getElementById('f-price').value.replace(/[^0-9]/g,''), 10) || 0,
+    inStock: document.getElementById('f-stock').classList.contains('on'),
+    pageUrl: document.getElementById('f-url').value.trim(),
+    imageUrl: document.getElementById('f-image').value.trim(),
+    summary: summary,
+    features: features,
+    faqs: faqs,
+    ratingValue: parseFloat(document.getElementById('f-rating').value) || 0,
+    reviewCount: parseInt(document.getElementById('f-reviews').value, 10) || 0
+  };
+}
+
+function buildCode(p){
+  var dataJson = JSON.stringify(p, null, 2);
+  return '<!-- 기존 통이미지 (그대로 유지) -->\n' +
+'<!--\n<img src="' + p.imageUrl + '" alt="' + p.name + '">\n-->\n\n' +
+'<!-- [1] 데이터: 상품이 바뀌면 이 블록만 교체하세요 -->\n' +
+'<script id="cuckoo-aeo-data" type="application/json">\n' + dataJson + '\n<' + '/script>\n\n' +
+'<!-- [2] 로직: 수정하지 말고 모든 상품에 동일하게 붙여넣으세요 -->\n' +
+'<script>\n' +
+"(function () {\n" +
+"  var dataEl = document.getElementById('cuckoo-aeo-data');\n" +
+"  if (!dataEl) return;\n" +
+"  var p = JSON.parse(dataEl.textContent);\n\n" +
+"  var productLd = {\n" +
+'    "@context": "https://schema.org",\n' +
+'    "@type": "Product",\n' +
+'    "name": p.name,\n' +
+'    "image": [p.imageUrl],\n' +
+'    "description": p.summary,\n' +
+'    "sku": p.modelCode,\n' +
+'    "brand": { "@type": "Brand", "name": "CUCKOO" },\n' +
+'    "offers": {\n' +
+'      "@type": "Offer",\n' +
+'      "url": p.pageUrl,\n' +
+'      "priceCurrency": "KRW",\n' +
+'      "price": String(p.price),\n' +
+'      "availability": p.inStock ? "https://schema.org/InStock" : "https://schema.org/OutOfStock"\n' +
+'    }\n' +
+"  };\n" +
+"  if (p.reviewCount > 0) {\n" +
+"    productLd.aggregateRating = {\n" +
+'      "@type": "AggregateRating",\n' +
+'      "ratingValue": String(p.ratingValue),\n' +
+'      "reviewCount": String(p.reviewCount)\n' +
+"    };\n" +
+"  }\n" +
+"  var productScript = document.createElement('script');\n" +
+"  productScript.type = 'application/ld+json';\n" +
+"  productScript.textContent = JSON.stringify(productLd);\n" +
+"  document.head.appendChild(productScript);\n\n" +
+"  if (p.faqs && p.faqs.length) {\n" +
+"    var faqLd = {\n" +
+'      "@context": "https://schema.org",\n' +
+'      "@type": "FAQPage",\n' +
+"      mainEntity: p.faqs.map(function (f) {\n" +
+"        return {\n" +
+'          "@type": "Question",\n' +
+"          name: f.q,\n" +
+'          acceptedAnswer: { "@type": "Answer", text: f.a }\n' +
+"        };\n" +
+"      })\n" +
+"    };\n" +
+"    var faqScript = document.createElement('script');\n" +
+"    faqScript.type = 'application/ld+json';\n" +
+"    faqScript.textContent = JSON.stringify(faqLd);\n" +
+"    document.head.appendChild(faqScript);\n" +
+"  }\n\n" +
+"  var featuresHtml = p.features.map(function (f) { return '<li>' + f + '</li>'; }).join('');\n" +
+"  var block = document.createElement('section');\n" +
+"  block.setAttribute('aria-label', '상품 상세 요약');\n" +
+"  block.style.cssText = 'position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;';\n" +
+"  block.innerHTML =\n" +
+"    '<h2>' + p.name + '</h2>' +\n" +
+"    '<p>' + p.summary + '</p>' +\n" +
+"    '<ul>' + featuresHtml + '</ul>';\n\n" +
+"  dataEl.insertAdjacentElement('afterend', block);\n" +
+"})();\n" +
+'<' + '/script>';
+}
+
+function updateGauge(p){
+  var filled = 0, total = 10;
+  if(p.name) filled++;
+  if(p.modelCode) filled++;
+  if(p.price) filled++;
+  filled++;
+  if(p.summary) filled++;
+  if(p.features.length) filled++;
+  if(p.faqs.length) filled++;
+  if(p.ratingValue || p.reviewCount) filled++;
+  if(p.imageUrl) filled++;
+  if(p.pageUrl) filled++;
+  var circumference = 157.1;
+  var offset = circumference - (filled/total)*circumference;
+  document.getElementById('gaugeArc').setAttribute('stroke-dashoffset', offset);
+  document.getElementById('gaugeText').textContent = filled + '/' + total;
+  document.querySelectorAll('.aeo-num').forEach(function(el){
+    var n = el.getAttribute('data-n');
+    var map = {'1':p.name,'2':p.modelCode,'3':p.price,'5':p.summary,'6':p.features.length,'7':p.faqs.length,'8':p.ratingValue||p.reviewCount,'8b':p.ratingValue||p.reviewCount,'9':p.imageUrl,'10':p.pageUrl,'4':true};
+    el.classList.toggle('filled', !!map[n]);
+  });
+}
+
+function renderPreview(p){
+  var body = document.getElementById('previewBody');
+  if(!p.name && !p.features.length){
+    body.className='aeo-empty';
+    body.textContent='항목을 입력하면 크롤러가 읽게 될 내용이 보여요 (화면엔 안 보여요)';
+    return;
+  }
+  body.className='';
+  var noteHtml = '<div class="aeo-note">화면엔 보이지 않고, JSON-LD와 함께 크롤러·AI에게만 전달돼요</div>';
+  var featuresHtml = p.features.map(function(f){ return '<li>'+escapeHtml(f)+'</li>'; }).join('');
+  body.innerHTML = noteHtml +
+    '<div class="aeo-preview-title">'+escapeHtml(p.name||'상품명')+'</div>'+
+    '<div class="aeo-preview-desc">'+escapeHtml(p.summary||'')+'</div>'+
+    '<ul style="font-size:14px;padding-left:18px;margin:0;color:var(--text-primary);line-height:1.7;">'+featuresHtml+'</ul>';
+}
+
+function refresh(){
+  var p = getData();
+  document.getElementById('codeOut').textContent = buildCode(p);
+  updateGauge(p);
+  renderPreview(p);
+}
+
+ids.forEach(function(id){
+  document.getElementById(id).addEventListener('input', refresh);
+});
+
+var stockToggle = document.getElementById('f-stock');
+stockToggle.addEventListener('click', function(){
+  var on = !stockToggle.classList.contains('on');
+  stockToggle.classList.toggle('on', on);
+  stockToggle.setAttribute('aria-checked', on);
+  document.getElementById('f-stock-text').textContent = on ? '재고 있어요' : '품절이에요';
+  refresh();
+});
+
+document.getElementById('tabCode').addEventListener('click', function(){
+  document.getElementById('tabCode').classList.add('active');
+  document.getElementById('tabPreview').classList.remove('active');
+  document.getElementById('viewCode').style.display='block';
+  document.getElementById('viewPreview').style.display='none';
+});
+document.getElementById('tabPreview').addEventListener('click', function(){
+  document.getElementById('tabPreview').classList.add('active');
+  document.getElementById('tabCode').classList.remove('active');
+  document.getElementById('viewPreview').style.display='block';
+  document.getElementById('viewCode').style.display='none';
+});
+
+document.getElementById('copyBtn').addEventListener('click', function(){
+  var code = document.getElementById('codeOut').textContent;
+  navigator.clipboard.writeText(code).then(function(){
+    var btn = document.getElementById('copyBtn');
+    var original = btn.innerHTML;
+    btn.innerHTML = '<i class="ti ti-check" aria-hidden="true"></i>복사했어요';
+    setTimeout(function(){ btn.innerHTML = original; }, 1500);
+  });
+});
+
+refresh();
+</script>
